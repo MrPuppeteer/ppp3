@@ -34,3 +34,9 @@
 *.exe
 *.out
 *.app
+
+# Cache
+.cache/
+
+# Compile Commands
+compile_commands.json
