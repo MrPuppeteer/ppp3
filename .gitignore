@@ -11,6 +11,10 @@
 *.gch
 *.pch
 
+# Precompiled Modules
+*.gcm
+*.pcm
+
 # Compiled Dynamic libraries
 *.so
 *.dylib
