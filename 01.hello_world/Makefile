@@ -18,3 +18,6 @@ default: 1.2.hello_world.out 1.3.hello_world_err.out 1.d.hello_world.out 1.e.1.h
 
 std.pcm: /usr/share/libc++/v1/std.cppm
 	$(CXX) $(CXXFLAGS) -Wno-reserved-identifier -Wno-reserved-module-identifier --precompile -o $@ $^
+
+clean:
+	rm -rf *.out *.pcm compile_commands.json .cache
