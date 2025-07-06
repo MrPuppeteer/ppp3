@@ -106,24 +106,22 @@ double term() {
   double left = primary();
   Token t = ts.get();
   while (true) {
-    while (true) {
-      switch (t.kind) {
-      case '*':
-        left *= primary();
-        t = ts.get();
-        break;
-      case '/': {
-        double d = primary();
-        if (d == 0)
-          throw runtime_error("divide by zero");
-        left /= d;
-        t = ts.get();
-        break;
-      }
-      default:
-        ts.putback(t);
-        return left;
-      }
+    switch (t.kind) {
+    case '*':
+      left *= primary();
+      t = ts.get();
+      break;
+    case '/': {
+      double d = primary();
+      if (d == 0)
+        throw runtime_error("divide by zero");
+      left /= d;
+      t = ts.get();
+      break;
+    }
+    default:
+      ts.putback(t);
+      return left;
     }
   }
 }
