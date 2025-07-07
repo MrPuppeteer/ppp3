@@ -15,8 +15,8 @@ int main() {
   cin >> age;
 
   if (age <= 0 || age >= 110) {
-		cerr << "error: you're kidding!" << '\n';
-		exit(1);
+    cerr << "error: you're kidding!" << '\n';
+    exit(1);
   }
 
   cout << "\nDear " << first_name << ", \n"

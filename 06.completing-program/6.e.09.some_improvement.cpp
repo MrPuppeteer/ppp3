@@ -65,21 +65,21 @@ using namespace std;
 
 // Token are initialized depending on the needs of each kind
 struct Token {
-	char kind;
-	double value;
-	string name;
+  char kind;
+  double value;
+  string name;
 
   Token() :kind{0} {}
-	Token(char ch) :kind{ch} {}
-	Token(char ch, double val) :kind{ch}, value{val} {}
+  Token(char ch) :kind{ch} {}
+  Token(char ch, double val) :kind{ch}, value{val} {}
   Token(char ch, string n) :kind{ch}, name{n} {}
 };
 
 class Token_stream {
 public:
-	Token get();
-	void putback(Token t);
-	void ignore(char c);
+  Token get();
+  void putback(Token t);
+  void ignore(char c);
 private:
   vector<Token> buffer;
 };
@@ -109,7 +109,7 @@ constexpr string powkey = "pow";
 
 // get literals from the implemented grammar
 Token Token_stream::get() {
-	// if (full) { full = false; return buffer; }
+  // if (full) { full = false; return buffer; }
 
   if (!buffer.empty()) {
     Token t = buffer.back();
@@ -117,74 +117,74 @@ Token Token_stream::get() {
     return t;
   }
 
-	char ch = ' ';
+  char ch = ' ';
   while (isspace(ch) && ch != '\n')
     ch = cin.get();
-	
+  
   switch (ch) {
-	case print_token:
+  case print_token:
   case '\n':
     return Token{print_token};
-	case '(':
-	case ')':
-	case '+':
-	case '-':
-	case '*':
-	case '/':
-	case '%':
-	case '=': // symbol literals
+  case '(':
+  case ')':
+  case '+':
+  case '-':
+  case '*':
+  case '/':
+  case '%':
+  case '=': // symbol literals
   case ',': // separator for function argument
-		return Token{ch};
-	case '.': // a floating-point-literal can start with a dot
+    return Token{ch};
+  case '.': // a floating-point-literal can start with a dot
   case '0': case '1': case '2': case '3': case '4':
-	case '5': case '6': case '7': case '8': case '9': // numeric literals
-	{
+  case '5': case '6': case '7': case '8': case '9': // numeric literals
+  {
     cin.putback(ch);
-	  double val;
-	  cin >> val;
-	  return Token{number, val};
-	}
-	default:
-		if (isalpha(ch) || ch == '_') {
-			string s;
-			s += ch;
-			while (cin.get(ch) && (isalpha(ch) || isdigit(ch) || ch == '_')) s += ch;
-			cin.putback(ch);
-			if (s == letkey) return Token{let};
-			if (s == constkey) return Token{constant};
-			if (s == helpkey) return Token{command, helpkey};
-			if (s == symkey) return Token{command, symkey};
-			if (s == quitkey) return Token{command, quitkey};
+    double val;
+    cin >> val;
+    return Token{number, val};
+  }
+  default:
+    if (isalpha(ch) || ch == '_') {
+      string s;
+      s += ch;
+      while (cin.get(ch) && (isalpha(ch) || isdigit(ch) || ch == '_')) s += ch;
+      cin.putback(ch);
+      if (s == letkey) return Token{let};
+      if (s == constkey) return Token{constant};
+      if (s == helpkey) return Token{command, helpkey};
+      if (s == symkey) return Token{command, symkey};
+      if (s == quitkey) return Token{command, quitkey};
       if (s == sqrtkey) return Token{sqrtfunc};
       if (s == powkey) return Token{powfunc};
-			return Token{name, s};
-		}
-		throw runtime_error("Bad token");
-	}
+      return Token{name, s};
+    }
+    throw runtime_error("Bad token");
+  }
 }
 
 // clear input until c is found
 void Token_stream::ignore(char c) {
-	// if (full && c == buffer.kind) {
-	// 	full = false;
-	// 	return;
-	// }
-	// full = false;
+  // if (full && c == buffer.kind) {
+  //  full = false;
+  //  return;
+  // }
+  // full = false;
 
   while (!buffer.empty() && buffer.back().kind != c)
     buffer.pop_back();
 
   if (!buffer.empty()) return;
 
-	char ch = 0;
-	while (cin >> ch)
-		if (ch == c) return;
+  char ch = 0;
+  while (cin >> ch)
+    if (ch == c) return;
 }
 
 class Variable {
 public:
-	string name;
-	double value;
+  string name;
+  double value;
   bool constant;
 };
 
@@ -278,45 +278,45 @@ double func(char c) {
 }
 
 double primary() {
-	Token t = ts.get();
-	switch (t.kind) {
-	case '(': {
+  Token t = ts.get();
+  switch (t.kind) {
+  case '(': {
     double d = expression();
-	  t = ts.get();
-	  if (t.kind != ')') throw runtime_error("'(' expected");
+    t = ts.get();
+    if (t.kind != ')') throw runtime_error("'(' expected");
     return d;
-	}
-	case '-':
-		return -primary();
+  }
+  case '-':
+    return -primary();
   case '+':
     return primary();
-	case number:
-		return t.value;
-	case name:
-		return symbols.get(t.name);
+  case number:
+    return t.value;
+  case name:
+    return symbols.get(t.name);
   case sqrtfunc: case powfunc:
     return func(t.kind);
-	default:
-		throw runtime_error("primary expected");
-	}
+  default:
+    throw runtime_error("primary expected");
+  }
 }
 
 double term() {
-	double left = primary();
-	Token t = ts.get();
-	while (true) {
-		switch (t.kind) {
-		case '*':
-			left *= primary();
+  double left = primary();
+  Token t = ts.get();
+  while (true) {
+    switch (t.kind) {
+    case '*':
+      left *= primary();
       t = ts.get();
-			break;
-		case '/': {
+      break;
+    case '/': {
       double d = primary();
-		  if (d == 0) throw runtime_error("divide by zero");
-		  left /= d;
+      if (d == 0) throw runtime_error("divide by zero");
+      left /= d;
       t = ts.get();
-		  break;
-		}
+      break;
+    }
     case '%': {
       double d =primary();
       if (d == 0)
@@ -325,32 +325,32 @@ double term() {
       t = ts.get();
       break;
     }
-		default:
-			ts.putback(t);
-			return left;
-		}
-	}
+    default:
+      ts.putback(t);
+      return left;
+    }
+  }
 }
 
 double expression() {
-	double left = term();
+  double left = term();
   Token t = ts.get();
 
-	while (true) {
-		switch (t.kind) {
-		case '+':
-			left += term();
+  while (true) {
+    switch (t.kind) {
+    case '+':
+      left += term();
       t = ts.get();
-			break;
-		case '-':
-			left -= term();
+      break;
+    case '-':
+      left -= term();
       t = ts.get();
-			break;
-		default:
-			ts.putback(t);
-			return left;
-		}
-	}
+      break;
+    default:
+      ts.putback(t);
+      return left;
+    }
+  }
 }
 
 double assignment() {
@@ -366,30 +366,30 @@ double assignment() {
 
 double declaration() {
   bool is_const = false;
-	Token t = ts.get();
+  Token t = ts.get();
   if (t.kind == constant) is_const = true;
 
-	Token t2 = ts.get();
-	if (t2.kind != name) throw runtime_error("name expected in declaration");
+  Token t2 = ts.get();
+  if (t2.kind != name) throw runtime_error("name expected in declaration");
 
-	string var_name = t2.name;
-	if (symbols.is_declared(var_name)) throw runtime_error(var_name + " declared twice");
+  string var_name = t2.name;
+  if (symbols.is_declared(var_name)) throw runtime_error(var_name + " declared twice");
 
-	Token t3 = ts.get();
-	if (t3.kind != '=') throw runtime_error("= missing in declaration of " + var_name);
+  Token t3 = ts.get();
+  if (t3.kind != '=') throw runtime_error("= missing in declaration of " + var_name);
   
-	double d = expression();
+  double d = expression();
   symbols.declare(var_name,d,is_const);
-	return d;
+  return d;
 }
 
 double statement() {
-	Token t = ts.get();
-	switch (t.kind) {
-	case let:
+  Token t = ts.get();
+  switch (t.kind) {
+  case let:
   case constant:
     ts.putback(t);
-		return declaration();
+    return declaration();
   case name: {
     Token t2 = ts.get();
     ts.putback(t2);
@@ -399,14 +399,14 @@ double statement() {
     }
     return expression();
   }
-	default:
-		ts.putback(t);
-		return expression();
-	}
+  default:
+    ts.putback(t);
+    return expression();
+  }
 }
 
 void clean_up_mess() {
-	ts.ignore(print_token);
+  ts.ignore(print_token);
 }
 
 void print_help() {
@@ -440,23 +440,23 @@ const string prompt = "> ";
 const string result = "= ";
 
 void calculate() {
-	while (cin) try {
-		cout << prompt;
-		Token t = ts.get();
-		while (t.kind == print_token) t = ts.get();
+  while (cin) try {
+    cout << prompt;
+    Token t = ts.get();
+    while (t.kind == print_token) t = ts.get();
     if (t.kind == command) {
       if (t.name == quitkey) return;
       if (t.name == helpkey) print_help();
       if (t.name == symkey) symbols.print();
       ts.ignore(print_token); // Ignore whatever comes after a command
     } else {
-		  ts.putback(t);
-		  cout << result << statement() << '\n';
+      ts.putback(t);
+      cout << result << statement() << '\n';
     }
-	} catch (exception& e) {
-		cerr << e.what() << endl;
-		clean_up_mess();
-	}
+  } catch (exception& e) {
+    cerr << e.what() << endl;
+    clean_up_mess();
+  }
 }
 
 int main() try {
@@ -466,12 +466,12 @@ int main() try {
   symbols.declare("e", 2.71828182846, true);
 
   cout << "Welcome to calculator. Write help; for ... help.\n";
-	calculate();
-	return 0;
+  calculate();
+  return 0;
 } catch (exception& e) {
-	cerr << e.what() << endl;
-	return 1;
+  cerr << e.what() << endl;
+  return 1;
 } catch (...) {
-	cerr << "exception\n";
-	return 2;
+  cerr << "exception\n";
+  return 2;
 }
