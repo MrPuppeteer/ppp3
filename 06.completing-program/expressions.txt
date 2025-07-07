@@ -1,0 +1,4 @@
+let width = 10;
+let height = 25;
+width * height;
+4 * pi;
