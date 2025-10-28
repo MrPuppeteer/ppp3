@@ -20,7 +20,7 @@ int main() try {
 
   print_v("The strings vector is", data);
   print_v("The corresponding lengths are", gen_len_vector(data));
-  print_v("The longest strings area", find_long_str(data));
+  print_v("The longest strings are", find_long_str(data));
   print_v("The shortest strings are", find_short_str(data));
   cout << "The first lexicographically string is: \"" << first_str(data) << "\"\n"
        << "The last lexicographically string is: \"" << last_str(data) << "\"\n";
